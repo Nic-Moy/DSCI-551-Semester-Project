@@ -5,7 +5,36 @@
 # DSCI 551 Semester Project
 
 
-def load_csv(csv_file, separator = ','):
+def convert_value(value):
+    #Getting ride of whitespace
+    value = value.strip()
+    
+    # Remove quotes if present 
+    if (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'")):
+        value = value[1:-1]  # Strip first and last character
+    
+    # Int vals
+    if value.isdigit() or (value.startswith('-') and value[1:].isdigit()):
+        return int(value)
+    
+    # Float vals
+    try:
+        if '.' in value:
+            return float(value)
+    except ValueError:
+        pass
+    
+    # Boolean vals
+    if value.lower() in ['true', 'false']:
+        return value.lower() == 'true'
+    
+    # else strings
+    return value
+
+
+
+# Data loading function
+def load_csv(csv_file):
     data = {}
     column_names = []
 
@@ -17,10 +46,20 @@ def load_csv(csv_file, separator = ','):
 
 
         for line in lines[1:]:
-            values = line.strip().split(',')
+            stripped_values = line.strip()
+
+            if not stripped_values:
+                continue
+            values = stripped_values.split(',')
 
             for i, column_name in enumerate(column_names):
-                data[column_name].append(values[i])
+                if i < len(values):
+                    converted_value = convert_value(values[i])
+                    data[column_name].append(converted_value)
+
+                else:
+                    data[column_name].append(None)
+
 
             
     return data, column_names
@@ -84,5 +123,3 @@ def main():
     
 
 main()
-
-#Testing
