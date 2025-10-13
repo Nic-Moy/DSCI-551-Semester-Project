@@ -26,4 +26,4 @@ NBA CSVs/
 test_data/
 
 # But keep one sample CSV for demo
-!sample_data.csv
+!player.csv

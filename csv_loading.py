@@ -34,13 +34,13 @@ def convert_value(value):
 
 
 # Data loading function
-def load_csv(csv_file):
+def load_csv(csv_file, separator = ','):
     data = {}
     column_names = []
 
     with open(csv_file, 'r') as file:
         lines = file.readlines()
-        column_names = lines[0].strip().split(',')
+        column_names = lines[0].strip().split(separator)
 
         data = {x: [] for x in column_names}
 
@@ -50,7 +50,7 @@ def load_csv(csv_file):
 
             if not stripped_values:
                 continue
-            values = stripped_values.split(',')
+            values = stripped_values.split(separator)
 
             for i, column_name in enumerate(column_names):
                 if i < len(values):
