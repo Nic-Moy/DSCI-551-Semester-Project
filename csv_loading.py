@@ -4,7 +4,7 @@
 # Nicolas Moy
 # DSCI 551 Semester Project
 
-
+# Converting values to correct data type
 def convert_value(value):
     #Getting ride of whitespace
     value = value.strip()
@@ -121,7 +121,7 @@ class dataFrame:
         return "\n".join(result)
     
 
-    # Select function in SQL aka projection
+    # Select function aka projection
     def select(self, columns):
         # Validate that requested columns exist
         for col in columns:
@@ -137,6 +137,7 @@ class dataFrame:
         return dataFrame(new_data, columns)
     
 
+    # Where function aka filtering
     def where(self, condition):
         if not self.column_names or self.shape[0] == 0:
             return dataFrame({}, [])
@@ -173,6 +174,20 @@ class dataFrame:
             new_data[col] = [self.data[col][i] for i in rows_to_keep]
         
         return dataFrame(new_data, self.column_names)
+
+
+    #Group by function
+    def group_by(self):
+        pass
+
+    
+    #Aggregation functions
+    def avg(self, column):
+        pass
+
+    def sum(self, column):
+        pass
+
 
         
     
