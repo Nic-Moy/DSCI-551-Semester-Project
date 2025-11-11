@@ -219,9 +219,12 @@ class dataFrame:
 
         for group_key, row_indices in groups.items():
             result_data[group_column].append(group_key)
-        
+
+            #Getting the values to average
             values = [self.data[average_column][i] for i in row_indices]
-            values = [v for v in values if v is not None]
+            values = [i for i in values if i is not None]
+
+            # Taking the average of the values
             avg_val = __builtins__.sum(values) / len(values) if values else 0
             result_data[f'{average_column}_avg'].append(avg_val)
     
@@ -243,7 +246,7 @@ class dataFrame:
             
             #Getting values to sum, removes None
             values = [self.data[sum_column][i] for i in row_indices]
-            values = [v for v in values if v is not None]
+            values = [i for i in values if i is not None]
 
             #"built ins" because there is a name conflict with pythons sum
             total = __builtins__.sum(values) if values else 0
@@ -253,15 +256,68 @@ class dataFrame:
     
 
     def max(self, group_column, max_column):
-        pass
+        #Grouping
+        groups = self.group_by(group_column)
+        
+        result_data = {
+            group_column: [],
+            f'{max_column}_max': []
+        }
+        
+        for group_key, row_indices in groups.items():
+            result_data[group_column].append(group_key)
+
+            #Getting values to find max, removes none
+            values = [self.data[max_column][i] for i in row_indices]
+            values = [i for i in values if i is not None]
+            
+            # Selecting the Maximum out of all the values
+            max_val = __builtins__.max(values) if values else None
+            result_data[f'{max_column}_max'].append(max_val)
+        
+        return dataFrame(result_data, [group_column, f'{max_column}_max'])
 
 
     def min(self, group_column, min_column):
-        pass
+        #Grouping
+        groups = self.group_by(group_column)
+        
+        result_data = {
+            group_column: [],
+            f'{min_column}_min': []
+        }
+        
+        for group_key, row_indices in groups.items():
+            result_data[group_column].append(group_key)
+
+            #Getting values to find min, removes none
+            values = [self.data[min_column][i] for i in row_indices]
+            values = [v for v in values if v is not None]  
+
+            # Selecting the minimum out of all the values
+            min_val = __builtins__.min(values) if values else None
+            result_data[f'{min_column}_min'].append(min_val)
+        
+        return dataFrame(result_data, [group_column, f'{min_column}_min'])
     
 
-    def count(self, group_column, count_column):
-        pass
+    def count(self, group_column):
+        #Grouping
+        groups = self.group_by(group_column)
+        
+        result_data = {
+            group_column: [],
+            'count': []
+        }
+        
+        for group_key, row_indices in groups.items():
+            result_data[group_column].append(group_key)
+            
+            # Counting number of rows
+            count_val = len(row_indices)
+            result_data['count'].append(count_val)
+        
+        return dataFrame(result_data, [group_column, 'count'])
 
     
 
@@ -279,18 +335,30 @@ def main():
 
     #projected_df = df.select(['full_name', 'is_active']).where({'is_active': 1})
     #projected_df = df.select(['full_name', 'id']).where(lambda row: row['id'] >163000)
-
     #print(projected_df)
 
     # Where Function (Filtering)
+
     #active = df.where({'last_name': "Kuminga"})
     #print(active)
 
     # Aggregation Functions (using group by)
-    testing_sum = df.sum("position", "salary")
-    print(testing_sum)
-    testing_avg = df.avg("position", "points_per_game")
-    print(testing_avg)
+
+    # testing_sum = df.sum("position", "salary")
+    # print(testing_sum)
+    # testing_avg = df.avg("position", "points_per_game")
+    # print(testing_avg)
+    #testing_min = df.min("full_name", "minutes_per_game")
+    #print(testing_min)
+    # testing_max = df.max("position", "points_per_game")
+    # print(testing_max)
+    # testing_min = df.min("position", "points_per_game")
+    # print(testing_min)
+    # testing_count = df.count("position")
+    # print(testing_count)
+
+    # Join Function
+
     
 
 main()
