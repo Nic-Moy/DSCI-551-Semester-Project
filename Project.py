@@ -318,6 +318,64 @@ class dataFrame:
             result_data['count'].append(count_val)
         
         return dataFrame(result_data, [group_column, 'count'])
+    
+
+    #////////////////////   Join functions   /////////////////////////////////////
+
+    def join(self, df_to_join, left_key, right_key):
+        # Validate keys exist
+        if left_key not in self.column_names:
+            raise KeyError(f"Left key '{left_key}' not found in left DataFrame!")
+        if right_key not in df_to_join.column_names:
+            raise KeyError(f"Right key '{right_key}' not found in right DataFrame!")
+        
+        # Initialize result columns
+        result_data = {}
+        result_columns = []
+        changed_columns = {}
+        
+        # Add all columns from left DataFrame
+        for col in self.column_names:
+            result_data[col] = []
+            result_columns.append(col)
+        
+        # Add columns from right DataFrame (skip join key to avoid duplication)
+        for col in df_to_join.column_names:
+            if col != right_key:
+                # Check for matching columns that isn't key
+                if col in result_columns:
+                    new_col_name = f"{col}_right"
+                    result_data[new_col_name] = []
+                    result_columns.append(new_col_name)
+                    changed_columns[col] = new_col_name
+
+                # No matching columns found
+                else:
+                    result_data[col] = []
+                    result_columns.append(col)
+        
+        
+        for i in range(self.shape[0]):
+            left_value = self.data[left_key][i]
+            
+            # Find matching rows in df_to_join
+            for j in range(df_to_join.shape[0]):
+                right_value = df_to_join.data[right_key][j]
+                
+                # Match found in both tables
+                if left_value == right_value:   
+                    for col in self.column_names:
+                        result_data[col].append(self.data[col][i])
+                    
+                    for col in df_to_join.column_names:
+                        if col != right_key:
+                            if col in changed_columns:
+                                result_data[changed_columns[col]].append(df_to_join.data[col][j])
+                            else:
+                                result_data[col].append(df_to_join.data[col][j])
+        
+        return dataFrame(result_data, result_columns)
+        
 
     
 
@@ -326,8 +384,10 @@ def main():
     # Getting data and storing as DataFrame
     player_test_file = "NBA CSVs/player.csv"
     Warriors_test_file = "NBA CSVs/WarriorsStats.csv"
-    data, column_names = load_csv(Warriors_test_file)
+    data, column_names = load_csv(player_test_file)
+    data2, column_names2 = load_csv(Warriors_test_file)
     df = dataFrame(data, column_names)
+    df2 = dataFrame(data2, column_names2)
     print("\n")
     
 
@@ -359,6 +419,12 @@ def main():
 
     # Join Function
 
+    testing_join = df.join(df2, "id", "player_id")
+    result = testing_join.select(['id', 'full_name', 'points_per_game',
+                                  'position', 'is_active', 'salary'])
     
+    print(result)
+
+
 
 main()
