@@ -3,6 +3,7 @@
 
 # Nicolas Moy
 # DSCI 551 Semester Project
+# NBA 2022/2023 Season Data (season after warriors took home the W)
 
 # Converting values to correct data type
 def convert_value(value):
@@ -121,7 +122,7 @@ class dataFrame:
         return "\n".join(result)
     
 
-    # Select function aka projection
+    # #////////////////////   Select function aka projection   /////////////////////////////////////
     def select(self, columns):
         # Validate that requested columns exist
         for col in columns:
@@ -137,7 +138,7 @@ class dataFrame:
         return dataFrame(new_data, columns)
     
 
-    # Where function aka filtering
+    # #////////////////////   Where function aka filtering   /////////////////////////////////////
     def where(self, condition):
         if not self.column_names or self.shape[0] == 0:
             return dataFrame({}, [])
@@ -176,38 +177,120 @@ class dataFrame:
         return dataFrame(new_data, self.column_names)
 
 
-    #Group by function
-    def group_by(self):
-        pass
-
+    #////////////////////   Group by function   /////////////////////////////////////
+    def group_by(self, columns):
+        if isinstance(columns, str):
+            columns = [columns]
     
-    #Aggregation functions
-    def avg(self, column):
-        pass
-
-    def sum(self, column):
-        pass
-
-
+    # Validate columns exist
+        for col in columns:
+            if col not in self.column_names:
+                raise KeyError(f"Column '{col}' not found!")
+    
+    # Create groups
+        groups = {}
+    
+        for i in range(self.shape[0]):
+            # Create group key from values in group columns
+            key_parts = []
+            for col in columns:
+                key_parts.append(self.data[col][i])
+            
+            # Use tuple as key (hashable)
+            group_key = tuple(key_parts) if len(key_parts) > 1 else key_parts[0]
+            
+            # Add row index to this group
+            if group_key not in groups:
+                groups[group_key] = []
+            groups[group_key].append(i)
         
+        return groups
+
+    
+    ##////////////////////   Aggregation functions   /////////////////////////////////////
+    def avg(self, group_column, average_column):
+        #Grouping
+        groups = self.group_by(group_column)
+
+        result_data = {
+            group_column: [],
+            f'{average_column}_avg': []
+        }
+
+        for group_key, row_indices in groups.items():
+            result_data[group_column].append(group_key)
+        
+            values = [self.data[average_column][i] for i in row_indices]
+            values = [v for v in values if v is not None]
+            avg_val = __builtins__.sum(values) / len(values) if values else 0
+            result_data[f'{average_column}_avg'].append(avg_val)
+    
+        return dataFrame(result_data, [group_column, f'{average_column}_avg'])
+
+
+
+    def sum(self, group_column, sum_column):
+        #Grouping 
+        groups = self.group_by(group_column)
+    
+        result_data = {
+            group_column: [],
+            f'{sum_column}_sum': []
+        }
+        
+        for group_key, row_indices in groups.items():
+            result_data[group_column].append(group_key)
+            
+            #Getting values to sum, removes None
+            values = [self.data[sum_column][i] for i in row_indices]
+            values = [v for v in values if v is not None]
+
+            #"built ins" because there is a name conflict with pythons sum
+            total = __builtins__.sum(values) if values else 0
+            result_data[f'{sum_column}_sum'].append(total)
+        
+        return dataFrame(result_data, [group_column, f'{sum_column}_sum'])
     
 
+    def max(self, group_column, max_column):
+        pass
 
+
+    def min(self, group_column, min_column):
+        pass
+    
+
+    def count(self, group_column, count_column):
+        pass
+
+    
+
+#////////////////////   Main function   /////////////////////////////////////
 def main():
     # Getting data and storing as DataFrame
-    test_file = "NBA CSVs/player.csv"
-    data, column_names = load_csv(test_file)
+    player_test_file = "NBA CSVs/player.csv"
+    Warriors_test_file = "NBA CSVs/WarriorsStats.csv"
+    data, column_names = load_csv(Warriors_test_file)
     df = dataFrame(data, column_names)
+    print("\n")
+    
 
     # Select Function (Projection)
-    projected_df = df.select(['full_name', 'is_active']) 
-    print(projected_df)
-    
-    # Where Function (Filtering)
-    active = df.where({'is_active': True}).select(['full_name']) 
-    print("Active players:")
-    print(active)
 
+    #projected_df = df.select(['full_name', 'is_active']).where({'is_active': 1})
+    #projected_df = df.select(['full_name', 'id']).where(lambda row: row['id'] >163000)
+
+    #print(projected_df)
+
+    # Where Function (Filtering)
+    #active = df.where({'last_name': "Kuminga"})
+    #print(active)
+
+    # Aggregation Functions (using group by)
+    testing_sum = df.sum("position", "salary")
+    print(testing_sum)
+    testing_avg = df.avg("position", "points_per_game")
+    print(testing_avg)
     
 
 main()
