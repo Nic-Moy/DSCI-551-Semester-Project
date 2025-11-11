@@ -101,7 +101,7 @@ class dataFrame:
         result = []
         
         # Header row(limit to first 5 columns)
-        header_row = " | ".join(f"{h:<15}" for h in self.column_names[:5])  
+        header_row = " | ".join(f"{h:<20}" for h in self.column_names[:5])  
         result.append(header_row)
         result.append("-" * len(header_row))
         
@@ -112,7 +112,7 @@ class dataFrame:
             # Limit first 5 columns
             for header in self.column_names[:5]:  
                 value = str(self.data[header][i])
-                row_data.append(f"{value:<15}")
+                row_data.append(f"{value:<20}")
             result.append(" | ".join(row_data))
         
         if self.shape[0] > 10:
@@ -375,8 +375,32 @@ class dataFrame:
                                 result_data[col].append(df_to_join.data[col][j])
         
         return dataFrame(result_data, result_columns)
+    
         
+#////////////////////  display all columns and rows helping function   /////////////////////////////////////
 
+    def display_all(self):
+        """Display all rows and columns"""
+        if not self.column_names:
+            return "Empty DataFrame"
+        
+        result = []
+        
+        # All columns
+        header_row = " | ".join(f"{h:<20}" for h in self.column_names)
+        result.append(header_row)
+        result.append("-" * len(header_row))
+        
+        # All rows
+        for i in range(self.shape[0]):
+            row_data = []
+            for header in self.column_names:
+                value = str(self.data[header][i])
+                row_data.append(f"{value:<20}")
+            result.append(" | ".join(row_data))
+        
+        result.append(f"\nDataFrame Shape: {self.shape}")
+        return "\n".join(result)
     
 
 #////////////////////   Main function   /////////////////////////////////////
@@ -419,11 +443,11 @@ def main():
 
     # Join Function
 
-    testing_join = df.join(df2, "id", "player_id")
-    result = testing_join.select(['id', 'full_name', 'points_per_game',
-                                  'position', 'is_active', 'salary'])
+    # testing_join = df.join(df2, "id", "player_id")
+    # result = testing_join.select(['id', 'full_name', 'first_name', 'last_name','points_per_game',
+    #                               'position', 'is_active', 'salary'])
     
-    print(result)
+    # print(result)
 
 
 
