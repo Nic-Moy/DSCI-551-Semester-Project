@@ -424,15 +424,15 @@ def main():
     
     # Select Function (Projection)
 
-    #projected_df = df.select(['full_name', 'is_active']).where({'is_active': 1})
+    # projected_df = df.select(['full_name', 'is_active']).where({'is_active': 0})
     #projected_df = df.select(['full_name', 'id']).where(lambda row: row['id'] >163000)
-    #print(projected_df)
+    # print(projected_df)
 
 
     # Where Function (Filtering)
 
-    #active = df.where({'last_name': "Kuminga"})
-    #print(active)
+    # active = df.where({'last_name': "Kuminga"})
+    # print(active)
 
 
     # Aggregation Functions (using group by)
