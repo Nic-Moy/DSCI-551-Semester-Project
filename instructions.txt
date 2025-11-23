@@ -1,0 +1,14 @@
+Nicolas Moy
+DSCI 551 Semester Project
+
+Hi there! To run my semester Project, make sure all 6 attatched files are in the same directory. Then go to that directory in terminal.
+The only dependency needed is streamlit so you'll have to run command:
+
+pip install streamlit
+
+Then once that is done you can run my app with command:
+
+streamlit run StreamlitApp.py
+
+
+Thank you!
