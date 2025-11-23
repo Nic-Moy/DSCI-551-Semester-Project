@@ -410,10 +410,10 @@ class dataFrame:
 #////////////////////   Main function   /////////////////////////////////////
 def main():
     # Getting data and storing as DataFrame
-    player_test_file = "NBA CSVs/player.csv"
-    Warriors_test_file = "NBA CSVs/WarriorsStats.csv"
-    data, column_names = load_csv(player_test_file)
-    data2, column_names2 = load_csv(Warriors_test_file)
+    player_file = "player.csv"
+    Warriors_file = "WarriorsStats.csv"
+    data, column_names = load_csv(player_file)
+    data2, column_names2 = load_csv(Warriors_file)
 
     df = dataFrame(data, column_names)  #Player Dataframe
     df2 = dataFrame(data2, column_names2)   #Warriors DF

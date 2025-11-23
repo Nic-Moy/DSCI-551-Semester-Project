@@ -6,13 +6,13 @@ import os
 import tempfile
 from Project import load_csv, dataFrame
 
-
+# //////////////////////  Streamlit Setup Stuff ///////////////////////////////////////////////
 st.set_page_config(page_title="NBA Data Analysis - DSCI 551 Project", layout="wide")
 
+# Title and pictures
 col1, col2, col3 = st.columns([1, 5, 1])
 with col1:
     st.image("warriors_logo.png")
-# Title and pictures
 with col2:
     st.markdown('<h1 class="main-header">🏀 NBA Data Analysis Dashboard</h1>', unsafe_allow_html=True)
     st.markdown("**Nicolas Moy DSCI 551 Semester Project - Solo Option**")
@@ -49,7 +49,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 # Initialize session state for dataframes
 if 'player_df' not in st.session_state:
     st.session_state.player_df = None
@@ -60,11 +59,10 @@ if 'warriors_df' not in st.session_state:
 st.sidebar.title("📁 Data Upload")
 st.sidebar.write("Upload your CSV files to begin analysis")
 
-# File uploaders
+# File uploading
 player_file = st.sidebar.file_uploader("Upload Player Data CSV", type=['csv'], key="player_upload")
 warriors_file = st.sidebar.file_uploader("Upload Warriors Stats CSV", type=['csv'], key="warriors_upload")
 
-# Process uploaded files
 if player_file is not None:
     # Save uploaded file temporarily
     with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False) as tmp:
@@ -73,7 +71,7 @@ if player_file is not None:
         tmp_path = tmp.name
     
     try:
-        # Load the CSV using our custom function
+        # Load the CSV
         data, columns = load_csv(tmp_path)
         st.session_state.player_df = dataFrame(data, columns)
         st.sidebar.success("✅ Player data loaded successfully!")
@@ -91,7 +89,7 @@ if warriors_file is not None:
         tmp_path = tmp.name
     
     try:
-        # Load the CSV using our custom function
+        # Load the CSV
         data, columns = load_csv(tmp_path)
         st.session_state.warriors_df = dataFrame(data, columns)
         st.sidebar.success("✅ Warriors data loaded successfully!")
@@ -100,6 +98,7 @@ if warriors_file is not None:
     finally:
         # Clean up temp file
         os.unlink(tmp_path)
+
 
 # //////////////////////  Main content area  ///////////////////////////////////////////////
 if st.session_state.player_df is None and st.session_state.warriors_df is None:
@@ -133,6 +132,7 @@ else:
     col1, col2 = st.columns(2)
     
     with col1:
+        #Player data displayed
         if st.session_state.player_df:
             st.metric("Player Dataset", 
                      f"{st.session_state.player_df.shape[0]} rows × {st.session_state.player_df.shape[1]} columns")
@@ -140,6 +140,7 @@ else:
             st.info("Player data not loaded")
     
     with col2:
+        #Warriros data displayed
         if st.session_state.warriors_df:
             st.metric("Warriors Dataset", 
                      f"{st.session_state.warriors_df.shape[0]} rows × {st.session_state.warriors_df.shape[1]} columns")
@@ -148,7 +149,7 @@ else:
     
     st.markdown("---")
     
-    # Operations tabs
+    # //////////////  Operations  ///////////////////////////////
     if st.session_state.warriors_df:
         operation = st.selectbox(
             "Select Operation to Demonstrate:",
@@ -187,7 +188,8 @@ else:
             # Show column info
             with st.expander("View Column Names"):
                 st.write(df2.column_names)
-        
+
+        # //////////////////  Selecting  //////////////////////////
         elif operation == "SELECT (Projection)":
             st.markdown('<h2 class="section-header">SELECT Operation - Column Projection</h2>', unsafe_allow_html=True)
             
@@ -211,7 +213,7 @@ else:
                     st.dataframe(result_data)
                 else:
                     st.warning("Please select at least one column")
-        
+        # //////////////////  Where Filtering  ///////////////////////////////
         elif operation == "WHERE (Filtering)":
             st.markdown('<h2 class="section-header">WHERE Operation - Row Filtering</h2>', unsafe_allow_html=True)
             
@@ -287,6 +289,7 @@ else:
                         else:
                             st.info("No rows meet ccndition")
         
+        # //////////////////////  Aggregation  ///////////////////////////////
         elif operation == "Aggregation Functions":
             st.markdown('<h2 class="section-header">Aggregation Functions</h2>', unsafe_allow_html=True)
             
@@ -330,10 +333,12 @@ else:
                         result_data[col] = result.data[col]
                     st.dataframe(result_data)
         
+        #  ////////////////  Joining  ///////////////////////////
         elif operation == "JOIN Operations":
             st.markdown('<h2 class="section-header">JOIN Operations</h2>', unsafe_allow_html=True)
             
-            if st.session_state.player_df:  # Need player data for join
+            # Need player csv data for join
+            if st.session_state.player_df:  
                 st.write("Join Warriors data with Player data")
                 
                 # Let user select join keys
@@ -341,12 +346,13 @@ else:
                 right_key = st.selectbox("Player table key:", st.session_state.player_df.column_names)
                 
                 if st.button("Execute JOIN", key="join_btn"):
+
                     # Perform the join - warriors JOIN players
                     result = df.join(st.session_state.player_df, left_key, right_key)
                     st.code(f"warriors.join(players, '{left_key}', '{right_key}')", language="python")
                     st.success(f"✅ Join complete - {result.shape[0]} matched rows")
                     
-                    # Show sample of joined data with columns from BOTH tables
+                    # Show joined data
                     if result.shape[0] > 0:
                         columns_to_show = []
                 
@@ -366,7 +372,8 @@ else:
                         st.write("**Joined Data:**")
                         result_data = {}
                         num_rows = min(10, result.shape[0])
-                        for col in columns_to_show[:10]:  # Limit to 10 columns for display
+                        # Show 10 columns for display
+                        for col in columns_to_show[:10]:  
                             if col in result.data:
                                 result_data[col] = [result.data[col][i] for i in range(num_rows)]
                         
