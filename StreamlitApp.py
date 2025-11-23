@@ -4,9 +4,8 @@
 import streamlit as st
 import os
 import tempfile
-
-
 from Project import load_csv, dataFrame
+
 
 st.set_page_config(page_title="NBA Data Analysis - DSCI 551 Project", layout="wide")
 
