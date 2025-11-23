@@ -2,11 +2,10 @@
 # DSCI 551 Semester Project
 
 import streamlit as st
-import sys
 import os
 import tempfile
 
-sys.path.append(os.path.dirname(__file__))
+
 from Project import load_csv, dataFrame
 
 st.set_page_config(page_title="NBA Data Analysis - DSCI 551 Project", layout="wide")
