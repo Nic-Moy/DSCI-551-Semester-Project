@@ -34,7 +34,7 @@ def convert_value(value):
 
 
 
-# Data loading function
+#////////////////////////  Data loading and parsing  /////////////////////////////////////
 def load_csv(csv_file, separator = ','):
     data = {}
     column_names = []
@@ -73,8 +73,7 @@ def load_csv(csv_file, separator = ','):
 
 
 
-
-#Dataframe class to hold and manipulate data
+# ////////////////////////  Dataframe class  /////////////////////////////////////
 class dataFrame:
 
     #Initalizing dataframe
@@ -122,6 +121,7 @@ class dataFrame:
         return "\n".join(result)
     
 
+
     # #////////////////////   Select function aka projection   /////////////////////////////////////
     def select(self, columns):
         # Validate that requested columns exist
@@ -137,6 +137,7 @@ class dataFrame:
         # Return new dataFrame
         return dataFrame(new_data, columns)
     
+
 
     # #////////////////////   Where function aka filtering   /////////////////////////////////////
     def where(self, condition):
@@ -177,6 +178,7 @@ class dataFrame:
         return dataFrame(new_data, self.column_names)
 
 
+
     #////////////////////   Group by function   /////////////////////////////////////
     def group_by(self, columns):
         if isinstance(columns, str):
@@ -206,6 +208,7 @@ class dataFrame:
         
         return groups
 
+
     
     ##////////////////////   Aggregation functions   /////////////////////////////////////
     def avg(self, group_column, average_column):
@@ -225,7 +228,7 @@ class dataFrame:
             values = [i for i in values if i is not None]
 
             # Taking the average of the values
-            avg_val = __builtins__.sum(values) / len(values) if values else 0
+            avg_val = sum(values) / len(values) if values else 0
             result_data[f'{average_column}_avg'].append(avg_val)
     
         return dataFrame(result_data, [group_column, f'{average_column}_avg'])
@@ -249,7 +252,7 @@ class dataFrame:
             values = [i for i in values if i is not None]
 
             #"built ins" because there is a name conflict with pythons sum
-            total = __builtins__.sum(values) if values else 0
+            total = sum(values) if values else 0
             result_data[f'{sum_column}_sum'].append(total)
         
         return dataFrame(result_data, [group_column, f'{sum_column}_sum'])
@@ -272,7 +275,7 @@ class dataFrame:
             values = [i for i in values if i is not None]
             
             # Selecting the Maximum out of all the values
-            max_val = __builtins__.max(values) if values else None
+            max_val =  max(values) if values else None
             result_data[f'{max_column}_max'].append(max_val)
         
         return dataFrame(result_data, [group_column, f'{max_column}_max'])
@@ -295,7 +298,7 @@ class dataFrame:
             values = [v for v in values if v is not None]  
 
             # Selecting the minimum out of all the values
-            min_val = __builtins__.min(values) if values else None
+            min_val = min(values) if values else None
             result_data[f'{min_column}_min'].append(min_val)
         
         return dataFrame(result_data, [group_column, f'{min_column}_min'])
@@ -320,8 +323,8 @@ class dataFrame:
         return dataFrame(result_data, [group_column, 'count'])
     
 
-    #////////////////////   Join functions   /////////////////////////////////////
 
+    #////////////////////   Join functions   /////////////////////////////////////
     def join(self, df_to_join, left_key, right_key):
         # Validate keys exist
         if left_key not in self.column_names:
@@ -377,8 +380,8 @@ class dataFrame:
         return dataFrame(result_data, result_columns)
     
         
-#////////////////////  display all columns and rows helping function   /////////////////////////////////////
 
+#////////////////////  display all columns and rows helping function   /////////////////////////////////////
     def display_all(self):
         """Display all rows and columns"""
         if not self.column_names:
@@ -403,6 +406,7 @@ class dataFrame:
         return "\n".join(result)
     
 
+
 #////////////////////   Main function   /////////////////////////////////////
 def main():
     # Getting data and storing as DataFrame
@@ -410,36 +414,42 @@ def main():
     Warriors_test_file = "NBA CSVs/WarriorsStats.csv"
     data, column_names = load_csv(player_test_file)
     data2, column_names2 = load_csv(Warriors_test_file)
-    df = dataFrame(data, column_names)
-    df2 = dataFrame(data2, column_names2)
-    print("\n")
-    
 
+    df = dataFrame(data, column_names)  #Player Dataframe
+    df2 = dataFrame(data2, column_names2)   #Warriors DF
+
+
+    #/////////////  Testing Functions  ////////////////////////
+    #print("\n")
+    
     # Select Function (Projection)
 
     #projected_df = df.select(['full_name', 'is_active']).where({'is_active': 1})
     #projected_df = df.select(['full_name', 'id']).where(lambda row: row['id'] >163000)
     #print(projected_df)
 
+
     # Where Function (Filtering)
 
     #active = df.where({'last_name': "Kuminga"})
     #print(active)
 
+
     # Aggregation Functions (using group by)
 
-    # testing_sum = df.sum("position", "salary")
+    # testing_sum = df2.sum("position", "salary")
     # print(testing_sum)
-    # testing_avg = df.avg("position", "points_per_game")
+    # testing_avg = df2.avg("position", "points_per_game")
     # print(testing_avg)
-    #testing_min = df.min("full_name", "minutes_per_game")
-    #print(testing_min)
-    # testing_max = df.max("position", "points_per_game")
-    # print(testing_max)
-    # testing_min = df.min("position", "points_per_game")
+    # testing_min = df2.min("position", "minutes_per_game")
     # print(testing_min)
-    # testing_count = df.count("position")
+    # testing_max = df2.max("position", "points_per_game")
+    # print(testing_max)
+    # testing_min = df2.min("position", "points_per_game")
+    # print(testing_min)
+    # testing_count = df2.count("position")
     # print(testing_count)
+
 
     # Join Function
 
@@ -448,7 +458,5 @@ def main():
     #                               'position', 'is_active', 'salary'])
     
     # print(result)
-
-
 
 main()
