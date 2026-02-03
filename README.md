@@ -25,12 +25,13 @@ The main DataFrame class is implemented in `project.py`. To run the Streamlit da
 ```bash
 streamlit run streamlitapp.py
 ```
+Then you upload the 2 CSV files into the app. Now you're able to do SQL like functions on the data!
 
 ## Project Structure
 
 - `project.py` - Core DataFrame implementation with all operations
 - `streamlitapp.py` - Streamlit dashboard for demonstration
-- Data files - 2022-23 Warriors statistics
+- Data files - 2022-23 Warriors statistics CSV & player CSV
 
 ## What I Learned
 
