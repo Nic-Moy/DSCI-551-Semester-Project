@@ -21,11 +21,6 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Project specific
-*.csv
-NBA CSVs/
-test_data/
-
 # But keep one sample CSV for demo
 !player.csv
 Midterm Project report.pdf
